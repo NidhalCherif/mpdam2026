@@ -18,6 +18,7 @@
       <parameter key="DoctrineMigrationsBundle">Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle</parameter>
       <parameter key="MakerBundle">Symfony\Bundle\MakerBundle\MakerBundle</parameter>
       <parameter key="DoctrineFixturesBundle">Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle</parameter>
+      <parameter key="NelmioCorsBundle">Nelmio\CorsBundle\NelmioCorsBundle</parameter>
     </parameter>
     <parameter key="kernel.bundles_metadata" type="collection">
       <parameter key="FrameworkBundle" type="collection">
@@ -39,6 +40,10 @@
       <parameter key="DoctrineFixturesBundle" type="collection">
         <parameter key="path">D:\ISET_2026_2027\MPDAM\BookShelf\backend\vendor\doctrine\doctrine-fixtures-bundle</parameter>
         <parameter key="namespace">Doctrine\Bundle\FixturesBundle</parameter>
+      </parameter>
+      <parameter key="NelmioCorsBundle" type="collection">
+        <parameter key="path">D:\ISET_2026_2027\MPDAM\BookShelf\backend\vendor\nelmio\cors-bundle</parameter>
+        <parameter key="namespace">Nelmio\CorsBundle</parameter>
       </parameter>
     </parameter>
     <parameter key="kernel.charset">UTF-8</parameter>
@@ -66,6 +71,9 @@
       <parameter key="Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle" type="collection">
         <parameter key="dev">true</parameter>
         <parameter key="test">true</parameter>
+      </parameter>
+      <parameter key="Nelmio\CorsBundle\NelmioCorsBundle" type="collection">
+        <parameter key="all">true</parameter>
       </parameter>
     </parameter>
     <parameter key="event_dispatcher.event_aliases" type="collection">
@@ -131,6 +139,39 @@
     <parameter key="doctrine.default_connection">default</parameter>
     <parameter key="doctrine.migrations.preferred_em">null</parameter>
     <parameter key="doctrine.migrations.preferred_connection">null</parameter>
+    <parameter key="nelmio_cors.map" type="collection">
+      <parameter key="^/" type="collection"/>
+    </parameter>
+    <parameter key="nelmio_cors.defaults" type="collection">
+      <parameter key="allow_origin" type="collection">
+        <parameter>%env(CORS_ALLOW_ORIGIN)%</parameter>
+      </parameter>
+      <parameter key="allow_credentials">false</parameter>
+      <parameter key="allow_headers" type="collection">
+        <parameter>content-type</parameter>
+        <parameter>authorization</parameter>
+      </parameter>
+      <parameter key="allow_private_network">false</parameter>
+      <parameter key="expose_headers" type="collection">
+        <parameter>Link</parameter>
+      </parameter>
+      <parameter key="allow_methods" type="collection">
+        <parameter>GET</parameter>
+        <parameter>OPTIONS</parameter>
+        <parameter>POST</parameter>
+        <parameter>PUT</parameter>
+        <parameter>PATCH</parameter>
+        <parameter>DELETE</parameter>
+      </parameter>
+      <parameter key="max_age">3600</parameter>
+      <parameter key="hosts" type="collection"/>
+      <parameter key="origin_regex">true</parameter>
+      <parameter key="skip_same_as_origin">true</parameter>
+      <parameter key="forced_allow_origin_value">null</parameter>
+    </parameter>
+    <parameter key="nelmio_cors.cors_listener.class">Nelmio\CorsBundle\EventListener\CorsListener</parameter>
+    <parameter key="nelmio_cors.options_resolver.class">Nelmio\CorsBundle\Options\Resolver</parameter>
+    <parameter key="nelmio_cors.options_provider.config.class">Nelmio\CorsBundle\Options\ConfigProvider</parameter>
     <parameter key="console.command.ids" type="collection"/>
   </parameters>
   <services>
@@ -194,7 +235,7 @@
     </service>
     <service id="argument_resolver.service" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
       <tag name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver" priority="-50">controller.argument_value_resolver</tag>
-      <argument type="service" id=".service_locator.tLvfT04"/>
+      <argument type="service" id=".service_locator.lmgBzoq"/>
     </service>
     <service id="argument_resolver.default" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver">
       <tag name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver" priority="-100">controller.argument_value_resolver</tag>
@@ -1159,6 +1200,30 @@
         <argument>0</argument>
       </call>
       <call method="addListener">
+        <argument>kernel.request</argument>
+        <argument type="collection">
+          <argument type="service_closure" id="nelmio_cors.cors_listener"/>
+          <argument>onKernelRequest</argument>
+        </argument>
+        <argument>250</argument>
+      </call>
+      <call method="addListener">
+        <argument>kernel.response</argument>
+        <argument type="collection">
+          <argument type="service_closure" id="nelmio_cors.cors_listener"/>
+          <argument>onKernelResponse</argument>
+        </argument>
+        <argument>0</argument>
+      </call>
+      <call method="addListener">
+        <argument>kernel.response</argument>
+        <argument type="collection">
+          <argument type="service_closure" id="nelmio_cors.cacheable_response_vary_listener"/>
+          <argument>onResponse</argument>
+        </argument>
+        <argument>-15</argument>
+      </call>
+      <call method="addListener">
         <argument>kernel.controller_arguments</argument>
         <argument type="collection">
           <argument type="service_closure" id="argument_resolver.request_payload"/>
@@ -1404,7 +1469,7 @@
     </service>
     <service id="argument_resolver.not_tagged_controller" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
       <tag name="controller.argument_value_resolver" priority="-200"/>
-      <argument type="service" id=".service_locator.tLvfT04"/>
+      <argument type="service" id=".service_locator.lmgBzoq"/>
     </service>
     <service id="routing.resolver" class="Symfony\Component\Config\Loader\LoaderResolver">
       <call method="addLoader">
@@ -3461,6 +3526,10 @@
         <argument>doctrine.fixtures_load_command</argument>
         <argument>doctrine.fixtures.loader</argument>
         <argument>doctrine.fixtures.purger.orm_purger_factory</argument>
+        <argument>nelmio_cors.cors_listener</argument>
+        <argument>nelmio_cors.options_resolver</argument>
+        <argument>nelmio_cors.options_provider.config</argument>
+        <argument>nelmio_cors.cacheable_response_vary_listener</argument>
         <argument>.instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\BooksController</argument>
         <argument>.instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\BooksController</argument>
         <argument>.instanceof.App\Controller\BooksController.0.App\Controller\BooksController</argument>
@@ -3509,7 +3578,14 @@
         <argument>.service_locator.1vYpZ1B.kernel::loadRoutes()</argument>
         <argument>.service_locator.FiMLVO_</argument>
         <argument>.service_locator.FiMLVO_.App\Controller\BooksController::index()</argument>
-        <argument>.service_locator.tLvfT04</argument>
+        <argument>.service_locator.9XrMDLi</argument>
+        <argument>.service_locator.9XrMDLi.App\Controller\BooksController::show()</argument>
+        <argument>.service_locator.D9VPgTq</argument>
+        <argument>.service_locator.D9VPgTq.App\Controller\BooksController::create()</argument>
+        <argument>.service_locator.D9VPgTq.App\Controller\BooksController::delete()</argument>
+        <argument>.service_locator.nuw5F66</argument>
+        <argument>.service_locator.nuw5F66.App\Controller\BooksController::update()</argument>
+        <argument>.service_locator.lmgBzoq</argument>
         <argument>.service_locator.n0.zoXR</argument>
         <argument>.service_locator.nqEKT7G</argument>
         <argument>.debug.value_resolver.argument_resolver.request</argument>
@@ -3958,6 +4034,10 @@
         <argument key="doctrine.fixtures_load_command">Doctrine\Bundle\FixturesBundle\Command\LoadDataFixturesDoctrineCommand</argument>
         <argument key="doctrine.fixtures.loader">Doctrine\Bundle\FixturesBundle\Loader\SymfonyFixturesLoader</argument>
         <argument key="doctrine.fixtures.purger.orm_purger_factory">Doctrine\Bundle\FixturesBundle\Purger\ORMPurgerFactory</argument>
+        <argument key="nelmio_cors.cors_listener">Nelmio\CorsBundle\EventListener\CorsListener</argument>
+        <argument key="nelmio_cors.options_resolver">Nelmio\CorsBundle\Options\Resolver</argument>
+        <argument key="nelmio_cors.options_provider.config">Nelmio\CorsBundle\Options\ConfigProvider</argument>
+        <argument key="nelmio_cors.cacheable_response_vary_listener">Nelmio\CorsBundle\EventListener\CacheableResponseVaryListener</argument>
         <argument key="maker.auto_command.make_auth">Symfony\Bundle\MakerBundle\Command\MakerCommand</argument>
         <argument key="maker.auto_command.make_command">Symfony\Bundle\MakerBundle\Command\MakerCommand</argument>
         <argument key="maker.auto_command.make_twig_component">Symfony\Bundle\MakerBundle\Command\MakerCommand</argument>
@@ -5243,6 +5323,18 @@
         <argument key="ORMPurgerFactory" type="collection">
           <argument>doctrine.fixtures.purger.orm_purger_factory</argument>
         </argument>
+        <argument key="Nelmio\CorsBundle\EventListener\CorsListener" type="collection">
+          <argument>nelmio_cors.cors_listener</argument>
+        </argument>
+        <argument key="Nelmio\CorsBundle\Options\Resolver" type="collection">
+          <argument>nelmio_cors.options_resolver</argument>
+        </argument>
+        <argument key="Nelmio\CorsBundle\Options\ConfigProvider" type="collection">
+          <argument>nelmio_cors.options_provider.config</argument>
+        </argument>
+        <argument key="CacheableResponseVaryListener" type="collection">
+          <argument>nelmio_cors.cacheable_response_vary_listener</argument>
+        </argument>
         <argument key="ContainerBagInterface" type="collection">
           <argument>Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface</argument>
         </argument>
@@ -5555,6 +5647,27 @@
     </service>
     <service id="doctrine.fixtures.purger.orm_purger_factory" class="Doctrine\Bundle\FixturesBundle\Purger\ORMPurgerFactory">
       <tag name="doctrine.fixtures.purger_factory" alias="default"/>
+    </service>
+    <service id="nelmio_cors.cors_listener" class="Nelmio\CorsBundle\EventListener\CorsListener">
+      <tag name="kernel.event_listener" event="kernel.request" method="onKernelRequest" priority="250"/>
+      <tag name="kernel.event_listener" event="kernel.response" method="onKernelResponse" priority="0"/>
+      <tag name="container.hot_path"/>
+      <tag name="container.hot_path"/>
+      <argument type="service" id="nelmio_cors.options_resolver"/>
+    </service>
+    <service id="nelmio_cors.options_resolver" class="Nelmio\CorsBundle\Options\Resolver">
+      <argument type="collection">
+        <argument type="service" id="nelmio_cors.options_provider.config"/>
+      </argument>
+    </service>
+    <service id="nelmio_cors.options_provider.config" class="Nelmio\CorsBundle\Options\ConfigProvider">
+      <tag name="nelmio_cors.options_provider" priority="-1"/>
+      <argument>%nelmio_cors.map%</argument>
+      <argument>%nelmio_cors.defaults%</argument>
+    </service>
+    <service id="nelmio_cors.cacheable_response_vary_listener" class="Nelmio\CorsBundle\EventListener\CacheableResponseVaryListener">
+      <tag name="kernel.event_listener" event="kernel.response" method="onResponse" priority="-15"/>
+      <tag name="container.hot_path"/>
     </service>
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\BooksController" class="App\Controller\BooksController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\BooksController" class="App\Controller\BooksController" autowire="true" abstract="true"/>
@@ -6004,7 +6117,52 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.FiMLVO_" method="withContext"/>
     </service>
-    <service id=".service_locator.tLvfT04" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.9XrMDLi" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="book" type="service_closure" id=".errored..service_locator.9XrMDLi.App\Entity\Books"/>
+      </argument>
+    </service>
+    <service id=".service_locator.9XrMDLi.App\Controller\BooksController::show()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\BooksController::show()"/>
+      <argument>App\Controller\BooksController::show()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.9XrMDLi" method="withContext"/>
+    </service>
+    <service id=".service_locator.D9VPgTq" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="book" type="service_closure" id=".errored..service_locator.D9VPgTq.App\Entity\Books"/>
+        <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
+      </argument>
+    </service>
+    <service id=".service_locator.D9VPgTq.App\Controller\BooksController::create()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\BooksController::create()"/>
+      <argument>App\Controller\BooksController::create()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.D9VPgTq" method="withContext"/>
+    </service>
+    <service id=".service_locator.D9VPgTq.App\Controller\BooksController::delete()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\BooksController::delete()"/>
+      <argument>App\Controller\BooksController::delete()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.D9VPgTq" method="withContext"/>
+    </service>
+    <service id=".service_locator.nuw5F66" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="book" type="service_closure" id=".errored..service_locator.nuw5F66.App\Entity\Books"/>
+        <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
+        <argument key="validator" type="service_closure" id="validator"/>
+      </argument>
+    </service>
+    <service id=".service_locator.nuw5F66.App\Controller\BooksController::update()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\BooksController::update()"/>
+      <argument>App\Controller\BooksController::update()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.nuw5F66" method="withContext"/>
+    </service>
+    <service id=".service_locator.lmgBzoq" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="kernel::registerContainerConfiguration" type="service_closure" id=".service_locator.1vYpZ1B.kernel::registerContainerConfiguration()"/>
@@ -6012,9 +6170,17 @@
         <argument key="kernel::loadRoutes" type="service_closure" id=".service_locator.1vYpZ1B.kernel::loadRoutes()"/>
         <argument key="App\Kernel::loadRoutes" type="service_closure" id=".service_locator.1vYpZ1B.kernel::loadRoutes()"/>
         <argument key="App\Controller\BooksController::index" type="service_closure" id=".service_locator.FiMLVO_.App\Controller\BooksController::index()"/>
+        <argument key="App\Controller\BooksController::show" type="service_closure" id=".service_locator.9XrMDLi.App\Controller\BooksController::show()"/>
+        <argument key="App\Controller\BooksController::create" type="service_closure" id=".service_locator.D9VPgTq.App\Controller\BooksController::create()"/>
+        <argument key="App\Controller\BooksController::delete" type="service_closure" id=".service_locator.D9VPgTq.App\Controller\BooksController::delete()"/>
+        <argument key="App\Controller\BooksController::update" type="service_closure" id=".service_locator.nuw5F66.App\Controller\BooksController::update()"/>
         <argument key="kernel:registerContainerConfiguration" type="service_closure" id=".service_locator.1vYpZ1B.kernel::registerContainerConfiguration()"/>
         <argument key="kernel:loadRoutes" type="service_closure" id=".service_locator.1vYpZ1B.kernel::loadRoutes()"/>
         <argument key="App\Controller\BooksController:index" type="service_closure" id=".service_locator.FiMLVO_.App\Controller\BooksController::index()"/>
+        <argument key="App\Controller\BooksController:show" type="service_closure" id=".service_locator.9XrMDLi.App\Controller\BooksController::show()"/>
+        <argument key="App\Controller\BooksController:create" type="service_closure" id=".service_locator.D9VPgTq.App\Controller\BooksController::create()"/>
+        <argument key="App\Controller\BooksController:delete" type="service_closure" id=".service_locator.D9VPgTq.App\Controller\BooksController::delete()"/>
+        <argument key="App\Controller\BooksController:update" type="service_closure" id=".service_locator.nuw5F66.App\Controller\BooksController::update()"/>
       </argument>
     </service>
     <service id=".service_locator.n0.zoXR" class="Symfony\Component\DependencyInjection\ServiceLocator">
@@ -6304,6 +6470,15 @@
     </service>
     <service id=".errored..service_locator.1vYpZ1B.Symfony\Component\Config\Loader\LoaderInterface" class="Symfony\Component\Config\Loader\LoaderInterface">
       <tag name="container.error" message="Cannot autowire service &quot;.service_locator.1vYpZ1B&quot;: it needs an instance of &quot;Symfony\Component\Config\Loader\LoaderInterface&quot; but this type has been excluded from autowiring."/>
+    </service>
+    <service id=".errored..service_locator.9XrMDLi.App\Entity\Books" class="App\Entity\Books">
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.9XrMDLi&quot;: it needs an instance of &quot;App\Entity\Books&quot; but this type has been excluded because it's a Doctrine entity."/>
+    </service>
+    <service id=".errored..service_locator.D9VPgTq.App\Entity\Books" class="App\Entity\Books">
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.D9VPgTq&quot;: it needs an instance of &quot;App\Entity\Books&quot; but this type has been excluded because it's a Doctrine entity."/>
+    </service>
+    <service id=".errored..service_locator.nuw5F66.App\Entity\Books" class="App\Entity\Books">
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.nuw5F66&quot;: it needs an instance of &quot;App\Entity\Books&quot; but this type has been excluded because it's a Doctrine entity."/>
     </service>
     <service id=".console.command.about.lazy" class="Symfony\Component\Console\Command\LazyCommand">
       <argument>about</argument>
@@ -7075,7 +7250,7 @@
     <service id="doctrine.migrations.metadata_storage" alias="doctrine.migrations.storage.table_storage"/>
     <service id="doctrine.fixtures.provider" alias="doctrine.fixtures.loader"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.ryAvHi4" public="true"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.tLvfT04"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.lmgBzoq"/>
     <service id="doctrine.id_generator_locator" alias=".service_locator.W55Po6X"/>
     <service id="Psr\Log\LoggerInterface" alias="logger"/>
     <service id="event_dispatcher" alias="debug.event_dispatcher" public="true"/>
@@ -7084,6 +7259,9 @@
     <service id="doctrine.orm.default_metadata_driver" alias=".doctrine.orm.default_metadata_driver"/>
     <service id=".service_locator.c0wzfI4" alias=".service_locator.1vYpZ1B"/>
     <service id=".service_locator.dr7lcMl" alias=".service_locator.FiMLVO_"/>
+    <service id=".service_locator.u2WcgFs" alias=".service_locator.9XrMDLi"/>
+    <service id=".service_locator.cn.PTu9" alias=".service_locator.D9VPgTq"/>
+    <service id=".service_locator.NAOC9T4" alias=".service_locator.nuw5F66"/>
     <service id=".service_locator.SPA6NDT" alias=".service_locator.TJNRSaV"/>
   </services>
 </container>

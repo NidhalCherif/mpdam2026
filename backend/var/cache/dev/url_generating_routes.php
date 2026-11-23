@@ -4,4 +4,16 @@
 
 return [
     '_preview_error' => [['code', '_format'], ['_controller' => 'error_controller::preview', '_format' => 'html'], ['code' => '\\d+'], [['variable', '.', '[^/]++', '_format', true], ['variable', '/', '\\d+', 'code', true], ['text', '/_error']], [], [], []],
+    'api_books_findAll' => [[], ['_controller' => 'App\\Controller\\BooksController::index'], [], [['text', '/api/books']], [], [], []],
+    'api_books_find' => [['id'], ['_controller' => 'App\\Controller\\BooksController::show'], [], [['variable', '/', '[^/]++', 'id', true], ['text', '/api/books']], [], [], []],
+    'api_books_create' => [[], ['_controller' => 'App\\Controller\\BooksController::create'], [], [['text', '/api/books']], [], [], []],
+    'api_books_delete' => [['id'], ['_controller' => 'App\\Controller\\BooksController::delete'], [], [['variable', '/', '[^/]++', 'id', true], ['text', '/api/books']], [], [], []],
+    'api_books_update' => [['id'], ['_controller' => 'App\\Controller\\BooksController::update'], [], [['variable', '/', '[^/]++', 'id', true], ['text', '/api/books']], [], [], []],
+    'app_hello' => [[], ['_controller' => 'App\\Controller\\HelloController::index'], [], [['text', '/hello']], [], [], []],
+    'App\\Controller\\BooksController::index' => [[], ['_controller' => 'App\\Controller\\BooksController::index'], [], [['text', '/api/books']], [], [], []],
+    'App\\Controller\\BooksController::show' => [['id'], ['_controller' => 'App\\Controller\\BooksController::show'], [], [['variable', '/', '[^/]++', 'id', true], ['text', '/api/books']], [], [], []],
+    'App\\Controller\\BooksController::create' => [[], ['_controller' => 'App\\Controller\\BooksController::create'], [], [['text', '/api/books']], [], [], []],
+    'App\\Controller\\BooksController::delete' => [['id'], ['_controller' => 'App\\Controller\\BooksController::delete'], [], [['variable', '/', '[^/]++', 'id', true], ['text', '/api/books']], [], [], []],
+    'App\\Controller\\BooksController::update' => [['id'], ['_controller' => 'App\\Controller\\BooksController::update'], [], [['variable', '/', '[^/]++', 'id', true], ['text', '/api/books']], [], [], []],
+    'App\\Controller\\HelloController::index' => [[], ['_controller' => 'App\\Controller\\HelloController::index'], [], [['text', '/hello']], [], [], []],
 ];
